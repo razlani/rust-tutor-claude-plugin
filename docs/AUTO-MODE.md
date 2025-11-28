@@ -306,9 +306,10 @@ They share progression, so use whichever fits your current need.
 Increase trigger frequency:
 ```json
 {
-  "trigger_frequency": 20  // Challenge less often
+  "trigger_frequency": 20
 }
 ```
+_(Challenge less often)_
 
 Or temporarily disable: `/auto-off`
 

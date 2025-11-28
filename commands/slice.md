@@ -104,8 +104,8 @@ Level {level} ({level_name}) - Slice {completed + 1}
 
 **Stub** (add to {implementation_file_path}):
 ```rust
-{Function signature with doc comment + placeholder return value}
-{The stub MUST compile but WILL fail the tests}
+// Function signature with doc comment + placeholder return value
+// The stub MUST compile but WILL fail the tests
 ```
 
 **Acceptance Criteria**:

@@ -128,7 +128,7 @@ Teach these principles through every task:
 
    **Stub** (add to {implementation file path}):
    ```rust
-   {Function signature + placeholder return}
+   // Function signature + placeholder return
    ```
 
    **Acceptance Criteria**:
