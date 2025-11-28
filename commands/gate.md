@@ -4,47 +4,71 @@ description: Run Rust quality gates and update learning progress
 
 ## Initialization
 
-First, check if `.claude/tutor/state.json` exists in the current project.
+**Step 1: Check if initialization is needed**
 
-If it does NOT exist, initialize the tutor structure:
+Run: `test -f .claude/tutor/state.json && echo "SKIP_INIT" || echo "NEED_INIT"`
 
-1. **Handle CLAUDE.md with version checking:**
-   - Check if `CLAUDE.md` exists in project root
-   - If it EXISTS:
-     - Read the file and search for marker: `<!-- RUST TUTOR PLUGIN INSTRUCTIONS v1.0.4 -->`
-     - If marker with version `1.0.4` found: Skip CLAUDE.md update (already current)
-     - If marker with older version found (e.g., `v1.0.0`): Remove old tutor section (everything between `<!-- RUST TUTOR PLUGIN INSTRUCTIONS v*` and `<!-- END RUST TUTOR PLUGIN INSTRUCTIONS -->`), then append new version
-     - If NO marker found: Append tutor instructions to the end with markers
-   - If it DOES NOT exist: Copy `${CLAUDE_PLUGIN_ROOT}/config/CLAUDE.md` → `./CLAUDE.md` and add version marker at the top
+If output is "SKIP_INIT", proceed directly to running quality gates.
 
-   **When appending or updating, use this format:**
+If output is "NEED_INIT", continue with initialization:
+
+**Step 2: Create directories**
+
+Run: `mkdir -p .claude/tutor/logs`
+
+**Step 3: Copy template files**
+
+Run these commands:
+```bash
+cp ${CLAUDE_PLUGIN_ROOT}config/state.template.json .claude/tutor/state.json
+cp ${CLAUDE_PLUGIN_ROOT}config/levels.yaml .claude/tutor/levels.yaml
+cp ${CLAUDE_PLUGIN_ROOT}config/complexity-map.yaml .claude/tutor/complexity-map.yaml
+```
+
+Use Write tool to create: `.claude/tutor/logs/.gitkeep` (empty file)
+
+**Step 4: Handle CLAUDE.md**
+
+Run: `test -f CLAUDE.md && echo "EXISTS" || echo "MISSING"`
+
+**If output is "MISSING":**
+1. Read `${CLAUDE_PLUGIN_ROOT}config/CLAUDE.md`
+2. Write it to `./CLAUDE.md` with this header prepended:
    ```markdown
-
    <!-- ========================================= -->
    <!-- RUST TUTOR PLUGIN INSTRUCTIONS v1.0.4 -->
    <!-- Auto-added by tutor plugin -->
    <!-- ========================================= -->
-
-   [Full contents of ${CLAUDE_PLUGIN_ROOT}/config/CLAUDE.md]
-
-   <!-- END RUST TUTOR PLUGIN INSTRUCTIONS -->
-   <!-- ========================================= -->
    ```
+3. Tell user: "Tutor initialized! Learning state created at `.claude/tutor/` and CLAUDE.md installed."
 
-2. **Create directories and copy template files:**
-   - Create directories: `.claude/tutor/` and `.claude/tutor/logs/`
-   - Copy template files from the plugin to the user's project:
-     - `${CLAUDE_PLUGIN_ROOT}/config/state.template.json` → `.claude/tutor/state.json`
-     - `${CLAUDE_PLUGIN_ROOT}/config/levels.yaml` → `.claude/tutor/levels.yaml`
-     - `${CLAUDE_PLUGIN_ROOT}/config/complexity-map.yaml` → `.claude/tutor/complexity-map.yaml`
-   - Create log directory placeholder: `.claude/tutor/logs/.gitkeep` (empty file)
+**If output is "EXISTS":**
+1. Read `./CLAUDE.md`
+2. Search for: `<!-- RUST TUTOR PLUGIN INSTRUCTIONS v1.0.4 -->`
 
-3. **Inform the user:**
-   - If CLAUDE.md was created fresh: "PASS: Tutor initialized! Learning state created at `.claude/tutor/` and CLAUDE.md installed."
-   - If CLAUDE.md was appended/updated: "PASS: Tutor initialized! Learning state created at `.claude/tutor/` and tutor instructions added to your existing CLAUDE.md."
-   - If CLAUDE.md was skipped (already current): "PASS: Tutor initialized! Learning state created at `.claude/tutor/`. Your CLAUDE.md already has current tutor instructions."
+   **If found:** Tell user: "Tutor initialized! Learning state created at `.claude/tutor/`. Your CLAUDE.md already has current tutor instructions."
 
-If state.json DOES exist, proceed directly to running quality gates.
+   **If not found:** Search for: `<!-- RUST TUTOR PLUGIN INSTRUCTIONS v`
+
+   - **If found (old version):** Remove everything from `<!-- RUST TUTOR PLUGIN INSTRUCTIONS v` to `<!-- END RUST TUTOR PLUGIN INSTRUCTIONS -->`, then continue to append step below
+   - **If not found (no marker):** Continue to append step below
+
+   **Append step:**
+   1. Read `${CLAUDE_PLUGIN_ROOT}config/CLAUDE.md`
+   2. Append to `./CLAUDE.md`:
+      ```markdown
+
+      <!-- ========================================= -->
+      <!-- RUST TUTOR PLUGIN INSTRUCTIONS v1.0.4 -->
+      <!-- Auto-added by tutor plugin -->
+      <!-- ========================================= -->
+
+      [Full contents of ${CLAUDE_PLUGIN_ROOT}config/CLAUDE.md]
+
+      <!-- END RUST TUTOR PLUGIN INSTRUCTIONS -->
+      <!-- ========================================= -->
+      ```
+   3. Tell user: "Tutor initialized! Learning state created at `.claude/tutor/` and tutor instructions added to your existing CLAUDE.md."
 
 ## Run Quality Gates
 
