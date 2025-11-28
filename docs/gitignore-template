@@ -1,0 +1,20 @@
+# Recommended .gitignore entries for Claude Rust Tutor Plugin
+#
+# Add these lines to your project's .gitignore to keep your
+# learning logs and temporary challenge files private.
+
+# Auto-mode learning logs (personal learning journal)
+.claude/tutor/logs/*.md
+
+# Temporary challenge test files (generated during auto-mode)
+tests/challenge_test.rs
+
+# Optional: If you want to reset progress frequently
+# .claude/tutor/state.json
+
+# Note: The following files SHOULD be committed:
+# - CLAUDE.md (tutor instructions)
+# - .claude/tutor/levels.yaml (learning progression)
+# - .claude/tutor/complexity-map.yaml (pattern mapping)
+#
+# Only logs and temporary test files should be ignored.

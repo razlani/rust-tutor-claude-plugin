@@ -1,0 +1,81 @@
+# Complexity Map: Rust Patterns → Minimum Level Required
+#
+# This file helps Claude decide whether a function is appropriate
+# for the user to implement in auto-mode. If the required complexity
+# is higher than the user's current level, Claude writes it instead.
+
+patterns:
+  # Level 1: Foundations
+  simple_function: 1
+  basic_loop: 1
+  basic_iterator: 1
+  iterator_map: 1
+  iterator_filter: 1
+  borrowing_basic: 1
+  slice_operations: 1
+  option_basic: 1
+  pattern_matching_basic: 1
+  struct_simple: 1
+
+  # Level 2: Errors & Traits
+  result_type: 2
+  result_propagation: 2  # Using ? operator
+  custom_error_type: 2
+  thiserror_derive: 2
+  from_trait: 2
+  into_trait: 2
+  trait_impl_basic: 2
+  option_advanced: 2
+  iterator_chaining: 2
+  no_unwrap_requirement: 2
+
+  # Level 3: DSP Basics & Performance
+  in_place_operations: 3
+  buffer_processing: 3
+  iterator_advanced: 3
+  collect_to_vec: 3
+  f32_f64_conversion: 3
+  numerical_stability: 3
+  zero_allocation_hotpath: 3
+  dsp_concepts: 3
+  windowing: 3
+  signal_processing: 3
+
+  # Level 4: Advanced Algorithms & Testing
+  generics_basic: 4
+  generics_advanced: 4
+  trait_bounds: 4
+  lifetime_annotations: 4
+  property_testing: 4
+  proptest_usage: 4
+  complex_algorithms: 4
+  peak_detection: 4
+  autocorrelation: 4
+
+  # Level 5: CLI & Production
+  async_await: 5
+  async_traits: 5
+  trait_objects: 5
+  dyn_dispatch: 5
+  clap_parsing: 5
+  tracing_instrumentation: 5
+  anyhow_errors: 5
+  cli_ux: 5
+  error_reporting_user_facing: 5
+  workspace_management: 5
+
+# Complexity scoring rules for Claude:
+#
+# When analyzing a function you're about to write:
+# 1. Identify all Rust concepts it requires
+# 2. Find the HIGHEST level among those concepts
+# 3. That's the complexity_required for this function
+# 4. Compare to user's current level:
+#    - If complexity_required <= user_level → Present as challenge
+#    - If complexity_required > user_level → Write it yourself
+#
+# Example:
+#   Function needs: iterator_chaining (2) + f32_f64_conversion (3)
+#   → complexity_required = 3
+#   → User at level 2 → Claude writes it
+#   → User at level 3+ → Challenge user

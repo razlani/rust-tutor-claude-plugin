@@ -1,0 +1,17 @@
+{
+  "level": 1,
+  "completed": 0,
+  "streak": 0,
+  "last_task": null,
+  "history": [],
+  "created_at": "TIMESTAMP_PLACEHOLDER",
+  "plugin_version": "1.0.0",
+  "auto_mode": {
+    "enabled": false,
+    "tool_call_counter": 0,
+    "trigger_frequency": 8,
+    "current_challenge": null,
+    "auto_completions": 0,
+    "total_corrections": 0
+  }
+}

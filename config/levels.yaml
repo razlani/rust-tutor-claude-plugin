@@ -1,0 +1,145 @@
+# Rust Learning Progression - Level Configuration
+#
+# This file defines the progressive learning path for the Rust tutor.
+# Each level increases in complexity, LOC limit, and introduces new topics.
+
+levels:
+  1:
+    name: "Foundations"
+    description: "Master Rust basics: syntax, ownership, borrowing, and iterators"
+    topics:
+      - "rust_basics"        # Variables, functions, basic types
+      - "iterators"          # .iter(), .map(), .filter(), .sum()
+      - "borrowing"          # &T, &mut T, ownership rules
+      - "slices"             # &[T], working with borrowed data
+      - "naming"             # Rust naming conventions
+    constraints:
+      max_loc: 50            # Maximum lines of code per slice
+      tests_first: true      # Must write failing test before implementation
+    examples:
+      - "Implement rms(&[f32]) → f32 (root-mean-square, no allocations)"
+      - "Implement peak_abs(&[f32]) → f32 (find absolute maximum)"
+      - "Implement sum_positive(&[i32]) → i32 (sum only positive values)"
+      - "Implement normalize(&mut [f32]) (scale to [-1.0, 1.0] in-place)"
+    learning_goals:
+      - "Understand ownership and borrowing"
+      - "Write allocation-free functions using iterators"
+      - "Handle edge cases (empty slices, single elements)"
+      - "Use f64 for intermediate calculations (numerical stability)"
+
+  2:
+    name: "Errors & Traits"
+    description: "Proper error handling and trait implementation"
+    topics:
+      - "Result"             # Result<T, E>, ? operator
+      - "thiserror"          # Custom error types with derive
+      - "From/Into"          # Type conversions
+      - "trait_basics"       # Defining and implementing traits
+    constraints:
+      max_loc: 90
+      no_unwrap_in_libs: true  # Enforced by policy gate
+      tests_first: true
+    examples:
+      - "Create AudioError type with variants (InvalidFormat, OutOfRange, IoError)"
+      - "Implement Sample trait with as_f32() method"
+      - "Implement From<i16> for Sample newtype"
+      - "Write parse_header() → Result<Header, AudioError>"
+    learning_goals:
+      - "Never panic in library code (return Result)"
+      - "Use thiserror for ergonomic error types"
+      - "Implement From/Into for conversions"
+      - "Write simple traits and implementations"
+      - "Propagate errors with ? operator"
+
+  3:
+    name: "DSP Basics"
+    description: "Digital signal processing fundamentals and buffer operations"
+    topics:
+      - "gain"               # Amplitude scaling
+      - "mix"                # Combining signals
+      - "windows"            # Hann, Hamming window functions
+      - "normalize"          # Headroom management
+      - "headroom"           # Peak limiting
+    constraints:
+      max_loc: 120
+      no_unwrap_in_libs: true
+      tests_first: true
+      prefer_in_place: true  # Document when allocations are needed
+    examples:
+      - "Implement apply_gain(&mut [f32], gain_db: f32) (in-place, dB to linear)"
+      - "Implement mix(&[f32], &[f32], ratio: f32) → Vec<f32> (blend two signals)"
+      - "Implement hann_window(size: usize) → Vec<f32> (generate Hann window)"
+      - "Implement find_peak_abs(&[f32]) → f32 and limit_headroom(&mut [f32], threshold: f32)"
+    learning_goals:
+      - "Understand in-place vs. allocating functions"
+      - "Work with decibels (dB = 20 * log10(linear))"
+      - "Generate window functions (Hann, Hamming)"
+      - "Process audio buffers efficiently"
+      - "Document allocations when unavoidable"
+
+  4:
+    name: "Pitch & Properties"
+    description: "Algorithms, property-based testing, and performance"
+    topics:
+      - "acf"                # Autocorrelation function
+      - "peak_pick"          # Peak detection
+      - "clarity"            # Clarity/confidence metrics
+      - "proptest"           # Property-based testing
+    constraints:
+      max_loc: 150
+      no_unwrap_in_libs: true
+      tests_first: true
+      add_proptests: true    # Require property tests, not just unit tests
+    examples:
+      - "Implement autocorrelation(&[f32]) → Vec<f32> (ACF for pitch detection)"
+      - "Implement find_peak(&[f32], min_clarity: f32) → Option<usize> (peak index with clarity threshold)"
+      - "Write property test: autocorrelation output symmetry"
+      - "Write property test: peak finding monotonicity (larger min_clarity → fewer peaks)"
+    learning_goals:
+      - "Implement non-trivial algorithms (ACF)"
+      - "Handle edge cases explicitly (no peaks found → None)"
+      - "Use proptest for algorithmic properties"
+      - "Document time complexity (e.g., O(n²) for naive ACF)"
+      - "Consider performance (hot paths, allocations)"
+
+  5:
+    name: "CLI & DX"
+    description: "User-facing tools, logging, and developer experience"
+    topics:
+      - "clap"               # CLI argument parsing
+      - "tracing"            # Structured logging
+      - "anyhow"             # Error handling in binaries
+      - "ergonomics"         # User-friendly error messages, help text
+    constraints:
+      max_loc: 160
+      no_unwrap_in_libs: true
+      tests_first: true
+      help_text_required: true  # CLI must have comprehensive --help
+    examples:
+      - "Add clap args to dsp-distort binary (--input, --output, --gain, --help)"
+      - "Map library errors to anyhow in main() (use .context() for user-friendly messages)"
+      - "Add tracing subscriber with RUST_LOG support (info!, debug!, trace! macros)"
+      - "Write integration test for CLI (run binary, check output file exists)"
+    learning_goals:
+      - "Use clap for ergonomic CLI argument parsing"
+      - "Map thiserror → anyhow at binary boundary"
+      - "Add structured logging with tracing"
+      - "Write helpful error messages for users"
+      - "Create comprehensive --help text"
+
+# Progression rules
+progression:
+  start_level: 1              # New users begin here
+  bump_on:                    # Advance to next level when:
+    - "3 consecutive green slices"  # Streak reaches 3
+    - "all gates pass"              # Latest gate run succeeded
+  hold_on:                    # Do NOT advance when:
+    - "any gate fails"              # Latest gate run failed
+  max_level: 5                # Highest level (users stay here after reaching)
+  reset_on_level_up:
+    completed: 0              # Reset completed count when leveling up
+    streak: 0                 # Reset streak when leveling up
+
+# Metadata
+schema_version: "1.0"
+last_updated: "2025-11-22"

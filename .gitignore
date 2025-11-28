@@ -1,0 +1,27 @@
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.bak
+
+# claude code
+# Plugin development reference (local only)
+PLUGIN-KNOWLEDGE.md
+claude-code-docs/
+
+# Internal documentation (not for public release)
+TODO.md
+docs/RESEARCH.md
+docs/DESIGN.md

@@ -1,0 +1,14 @@
+{
+  "name": "rust-tutor",
+  "version": "1.0.4",
+  "description": "Interactive Rust learning with progressive difficulty, quality gates, and failing-test-first methodology. Includes auto-mode for learning while building real projects.",
+  "author": {
+    "name": "Claude Rust Tutor Contributors",
+    "email": "noreply@example.com"
+  },
+  "homepage": "https://github.com/username/claude-rust-tutor-plugin",
+  "repository": "https://github.com/username/claude-rust-tutor-plugin",
+  "license": "MIT",
+  "keywords": ["rust", "learning", "tutor", "tdd", "education", "quality-gates"],
+  "hooks": "./hooks/hooks.json"
+}
