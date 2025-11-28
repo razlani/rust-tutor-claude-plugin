@@ -4,13 +4,13 @@
 [![Claude Code](https://img.shields.io/badge/Claude_Code-Plugin-5A67D8)](https://code.claude.com)
 [![Rust](https://img.shields.io/badge/Rust-Learning-orange)](https://www.rust-lang.org)
 
-**Interactive Rust learning through progressive difficulty, quality gates, and test-driven development**
+**Learn Rust while building real projects - Claude challenges you to implement the actual code you need, then reviews and improves it**
 
-Learn Rust by doing, not by watching. This Claude Code plugin provides a structured, disciplined learning path where you write the code and Claude guides you through progressively harder challenges.
+This plugin turns every Rust project into a structured learning experience. Build what you want, and Claude will pause to challenge you with the actual functions your project needs - at your skill level. Get immediate code review, corrections, and explanations. Level up while creating real software.
 
 ---
 
-## TL;DR - Quick Install
+## TL;DR - Quick Install & Auto-Mode
 
 **Step 1: Add to your project's `.claude/settings.json`:**
 ```json
@@ -36,29 +36,33 @@ Learn Rust by doing, not by watching. This Claude Code plugin provides a structu
 3. Select **"rust-tutor [learning]"** and press Space to enable
 4. Press Enter to install
 
-**Step 3: Start learning:**
-
-Commands are auto-prefixed with `/rust-tutor:` (you can tab-complete):
+**Step 3: Enable auto-mode and start building:**
 
 ```bash
-/rust-tutor:slice        # Get your first challenge
-# ... implement the function ...
-/rust-tutor:gate         # Validate your work
-/rust-tutor:level        # View progress
+/rust-tutor:auto-on      # Enable continuous learning
+
+# Then build anything:
+# "Create a CLI tool that processes CSV files"
+# "Build an audio file analyzer"
+
+# Claude will pause and challenge you to implement functions
+# at your skill level, review your code, and teach you
 ```
 
-**That's it!** The plugin automatically initializes on first use.
+**That's it!** Learn while building real projects.
 
 ## Features
 
-- **5 Progressive Levels**: From basics to CLI development
-- **Strict Quality Gates**: fmt, clippy, tests, and policy enforcement
-- **Failing-Test-First**: You implement functions to pass comprehensive tests
+- **Auto-Mode Learning**: Claude pauses before writing Rust and challenges you to implement the actual code your project needs
+- **Intelligent Code Review**: Get corrections and explanations, not just pass/fail - learn from every implementation
+- **Context-Aware Challenges**: Implement real functions for your project, not synthetic exercises
+- **Learning Journal**: Every challenge logged with before/after code, corrections, and explanations
+- **Complexity Matching**: Only get challenges at your skill level - advanced code doesn't block you
+- **5 Progressive Levels**: From basics (iterators, borrowing) to production CLI development
+- **Strict Quality Gates**: fmt, clippy, tests, and policy enforcement on every challenge
 - **Streak System**: Build momentum, level up after 3 consecutive successes
-- **Focused Slices**: Small tasks (≤10 min) with clear acceptance criteria
+- **Manual Practice Mode**: Also available for focused drilling on specific concepts
 - **Cross-Platform**: Works on Windows, macOS, and Linux
-- **Progress Tracking**: See your level, streak, and history
-- **Auto-Mode**: Learn while building real projects with continuous challenges
 
 ---
 
@@ -118,7 +122,7 @@ All plugin commands are namespaced with `/rust-tutor:` prefix:
 
 **Why project-level?** The plugin tracks your learning progress in `.claude/tutor/state.json` within each project. When you commit `.claude/settings.json` to your repository, team members will automatically get the plugin when they trust the folder.
 
-### First Learning Slice
+### Recommended: Start with Auto-Mode
 
 Start Claude Code in your Rust project:
 
@@ -126,7 +130,31 @@ Start Claude Code in your Rust project:
 claude
 ```
 
-Then run your first task:
+Enable auto-mode and start building:
+
+```bash
+/rust-tutor:auto-on      # Enable continuous learning
+```
+
+Then ask Claude to build something real:
+
+```
+"Build me a CLI tool that processes CSV files"
+"Create an audio file analyzer"
+"Implement a configuration file parser"
+```
+
+Claude will:
+1. Plan the project architecture
+2. Pause before writing Rust functions
+3. Challenge you to implement them (at your skill level)
+4. Review your code with corrections and explanations
+5. Continue building with your validated code
+6. Log everything to `.claude/tutor/logs/level-N.md`
+
+**Alternative: Manual Practice Mode**
+
+For focused drilling on specific concepts:
 
 ```bash
 /rust-tutor:slice        # Get a practice exercise with failing test
@@ -141,7 +169,53 @@ The first time you run any tutor command, it automatically initializes the learn
 
 ## How It Works
 
-### The Learning Cycle
+### Auto-Mode: Learn While Building
+
+```
+You: "Build me a CLI that processes CSV files"
+
+Claude: [planning architecture...]
+
+AUTO-CHALLENGE [Level 2]
+
+I need: parse_row(line: &str) -> Result<Record, ParseError>
+Context: Parsing CSV rows for your CLI tool
+Location: src/parser.rs:42
+
+You: [implements function, runs cargo test]
+You: done
+
+Claude: PASS - Approved with 2 improvements:
+
+1. Replaced .unwrap() with proper error handling
+   - Before: parts[0].parse().unwrap()
+   - After: parts[0].parse().map_err(ParseError::InvalidNumber)?
+   - Why: Level 2 requires no unwrap in library code
+
+2. Changed manual split+collect to iterator chain
+   - Before: let parts: Vec<&str> = line.split(',').collect();
+   - After: line.split(',').map(...)
+   - Why: Avoids allocation, more idiomatic
+
+Streak: 2/3 -> 3/3 -> LEVEL UP to 3!
+Logged to .claude/tutor/logs/level-2.md
+
+[Claude continues building your CSV CLI...]
+```
+
+**How it works:**
+1. Plugin hooks inject auto-mode awareness into every message
+2. Claude sees your level and auto-mode status automatically
+3. Before writing Rust functions, Claude checks complexity vs. your skill level
+4. If it matches → pauses and challenges you
+5. If too advanced → writes it for you ("You'll learn this after leveling up!")
+6. You implement the actual code needed for your project
+7. Claude reviews, corrects if needed, explains why
+8. Everything logged to your learning journal
+
+### Manual Mode: The Learning Cycle
+
+For focused practice sessions:
 
 ```
 1. /slice  - Claude proposes a task + failing test
@@ -156,275 +230,212 @@ The first time you run any tutor command, it automatically initializes the learn
 
 Every slice must pass 4 gates:
 
-| Gate | Command | Purpose |
-|------|---------|---------|
-| **Formatting** | `cargo fmt --check` | Consistent code style |
-| **Lints** | `cargo clippy -D warnings` | Catch common mistakes, learn idioms |
-| **Tests** | `cargo test --no-fail-fast` | Verify correctness |
-| **Policy** | No `unwrap()`/`expect()` in libs | Proper error handling |
+| Gate           | Command                          | Purpose                             |
+|----------------|----------------------------------|-------------------------------------|
+| **Formatting** | `cargo fmt --check`              | Consistent code style               |
+| **Lints**      | `cargo clippy -D warnings`       | Catch common mistakes, learn idioms |
+| **Tests**      | `cargo test --no-fail-fast`      | Verify correctness                  |
+| **Policy**     | No `unwrap()`/`expect()` in libs | Proper error handling               |
 
 All gates must pass to advance. Failures reset your streak but don't drop your level.
 
 ### Learning Levels
 
-| Level | Name | LOC Limit | Topics | Constraints |
-|-------|------|-----------|--------|-------------|
-| **1** | Foundations | 50 | Basics, iterators, borrowing | Tests first |
-| **2** | Errors & Traits | 90 | Result, thiserror, From/Into | + No unwrap in libs |
-| **3** | DSP Basics | 120 | Gain, mix, windows | + Prefer in-place |
-| **4** | Pitch & Properties | 150 | ACF, peak detection, proptest | + Property tests |
-| **5** | CLI & DX | 160 | clap, tracing, anyhow | + Help text required |
+| Level | Name               | LOC Limit | Topics                        | Constraints          |
+|-------|--------------------|-----------|-------------------------------|----------------------|
+| **1** | Foundations        | 50        | Basics, iterators, borrowing  | Tests first          |
+| **2** | Errors & Traits    | 90        | Result, thiserror, From/Into  | + No unwrap in libs  |
+| **3** | DSP Basics         | 120       | Gain, mix, windows            | + Prefer in-place    |
+| **4** | Pitch & Properties | 150       | ACF, peak detection, proptest | + Property tests     |
+| **5** | CLI & DX           | 160       | clap, tracing, anyhow         | + Help text required |
 
 **Progression**: Complete 3 slices in a row (streak of 3) to level up.
 
 ---
 
-## Session Demo
-
-Here's what a real learning session looks like:
-
-```text
-> /slice
-
-Level 1 (Foundations) - Slice 1
-
-Goal: Implement root-mean-square (RMS) calculation
-
-Topic: iterators, f32/f64 precision
-
-File: crates/core/src/lib.rs
-
-Test (add to crates/core/tests/lib.rs):
-#[test]
-fn test_rms() {
-    assert_eq!(rms(&[]), 0.0);
-    assert_eq!(rms(&[2.0]), 2.0);
-    assert!((rms(&[1.0, 2.0, 3.0]) - 2.160).abs() < 0.01);
-}
-
-Stub (add to crates/core/src/lib.rs):
-pub fn rms(samples: &[f32]) -> f32 {
-    0.0  // TODO: implement
-}
-
-Acceptance Criteria:
-- All tests pass
-- No allocations (use iterator methods)
-- Use f64 for intermediate calculations to avoid precision loss
-
-Resources:
-- https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.map
-
-Now implement the function. When done, run /gate to verify your work.
-
-# ... developer implements the function ...
-
-> /gate
-
-SUCCESS: Quality Gates: ALL PASS
-
-PASS: Formatting: Passed (cargo fmt)
-PASS: Lints: Passed (cargo clippy)
-PASS: Tests: Passed (3 tests)
-PASS: Policy: Passed (no unwrap/expect in libs)
-
-Progress: Progress Updated:
-- Level: 1 (Foundations)
-- Completed: 1 slice
-- Streak: 1 consecutive passes
-
-Great work! Ready for the next slice? Run /slice to continue.
-
-> /level
-
-Progress: Learning Progress
-
-Current Level: 1 - Foundations
-Description: Learn Rust fundamentals
-Topics: rust_basics, iterators, borrowing, slices
-Completed: 1 slice at this level
-Streak: 1 consecutive passes
-Next Level: 2 - Errors & Traits (unlock after 2 more passes)
-
-Constraints for This Level:
-- Maximum LOC per slice: 50
-- Tests first: Yes
-
-Recent History (last 5 slices):
-- 2025-11-28 14:30: PASS
-
-Progress to Next Level:
-[▓░░] 1/3
-
-Total Slices Completed at This Level: 1
-```
-
----
-
 ## Learning Modes
 
-The tutor supports two complementary learning modes:
+### Primary: Auto-Mode (Learn While Building)
 
-### Manual Mode (Command-Based)
+**The recommended way to learn Rust with this plugin.**
 
-The default approach for deliberate practice:
-
-```bash
-/slice      # Get a practice exercise
-# ... implement the function ...
-/gate       # Validate with quality checks
-# Repeat
-```
-
-**Best for**: Focused skill building, learning new concepts in isolation, dedicated practice sessions.
-
-### Auto Mode (Continuous Learning)
-
-Learn while building real projects:
+Learn while building real projects - Claude challenges you with the actual functions your project needs:
 
 ```bash
-/auto-on    # Enable auto-mode
+/rust-tutor:auto-on    # Enable continuous learning
 
 # Then ask Claude to build something:
-# "Build me a CLI tool that processes CSV files"
-
-# Claude will pause before writing Rust functions and challenge you
-# to implement the ACTUAL CODE needed for your project
+"Build me a CLI tool that processes CSV files"
+"Create an audio file analyzer"
 ```
 
-**How it works**:
+**What happens:**
 1. Plugin hooks inject auto-mode awareness into every user message
 2. Claude sees your current level and auto-mode status automatically
-3. Before writing Rust functions, Claude checks if they match your skill level
-4. If complexity matches your level → pauses and challenges you
-5. You implement the actual code needed
-6. Claude reviews your code, makes corrections, explains why
-7. Continues building with your validated code
-8. Everything logged to `.claude/tutor/logs/level-N.md`
+3. Claude starts planning and building your project
+4. Before writing Rust functions, Claude checks complexity vs. your skill level
+5. If it matches your level → **Claude pauses and challenges you**
+6. You implement the actual code needed for your project
+7. Claude reviews your code with corrections and explanations
+8. Claude continues building with your validated code
+9. Everything logged to `.claude/tutor/logs/level-N.md`
 
-**Technical note**: Auto-mode uses a `UserPromptSubmit` hook that runs before Claude processes each message. This hook reads your tutor state and injects a reminder about your learning level, making Claude naturally aware of learning opportunities without requiring manual checks.
+**Why auto-mode is powerful:**
+- **Real context**: You're not solving toy problems - you're building actual software
+- **Code review**: Get corrections and explanations, not just pass/fail
+- **Learning journal**: Review all challenges, corrections, and patterns later
+- **Complexity-aware**: Advanced functions don't block you - Claude writes them and explains "You'll learn this at Level 5"
+- **Progressive**: Same 5-level system, same quality gates, but applied to real work
 
-**Best for**: Learning by doing, applying concepts in context, seeing how patterns fit together, getting code review on real implementations.
+**Commands**:
+- `/rust-tutor:auto-on` - Enable auto-mode
+- `/rust-tutor:auto-off` - Disable auto-mode
+- `/rust-tutor:auto-status` - View auto-mode stats and learning journal location
+
+See [docs/AUTO-MODE.md](docs/AUTO-MODE.md) for complete documentation.
+
+### Secondary: Manual Mode (Focused Practice)
+
+For deliberate practice on specific concepts:
+
+```bash
+/rust-tutor:slice      # Get a practice exercise
+# ... implement the function ...
+/rust-tutor:gate       # Validate with quality checks
+/rust-tutor:level      # View progress
+```
+
+**Best for**: Warming up, drilling specific concepts, focused skill building when you're not actively building a project.
 
 **Key differences**:
 
-| Feature | Manual Mode | Auto Mode |
-|---------|-------------|-----------|
-| Challenges | Synthetic practice exercises | Real code for current task |
-| Trigger | You run `/slice` | Automatic (every ~8 tool calls) |
-| Context | Isolated learning | Part of larger project |
-| Review | Quality gates only | Code inspection + corrections |
-| Logging | No detailed logs | Full learning journal |
+| Feature        | Manual Mode                  | Auto-Mode ⭐                                  |
+|----------------|------------------------------|----------------------------------------------|
+| **Challenges** | Synthetic practice exercises | Real code for your current project           |
+| **Trigger**    | You run `/slice`             | Automatic (every ~8 tool calls)              |
+| **Context**    | Isolated learning            | Part of larger project you're building       |
+| **Review**     | Quality gates only           | Code inspection + corrections + explanations |
+| **Logging**    | No detailed logs             | Full learning journal with before/after      |
+| **Learning**   | Deliberate practice          | Learning by building real things             |
 
-**Both modes share the same progression system** - you can mix them! Practice with `/slice`, then apply with `/auto-on` during development.
-
-**Commands**:
-- `/auto-on` - Enable auto-mode
-- `/auto-off` - Disable auto-mode
-- `/auto-status` - View auto-mode stats
-
-See [docs/AUTO-MODE.md](docs/AUTO-MODE.md) for complete documentation and [examples/auto-mode-walkthrough.md](examples/auto-mode-walkthrough.md) for a full example session.
+**Both modes share the same progression system** - you can mix them! Practice with `/slice`, then apply with `/auto-on` during development. All progress counts toward the same streak and level-up system.
 
 ---
 
 ## Commands
 
-### `/slice` - Plan Next Task
+### Auto-Mode Commands
 
-Proposes a learning task based on your current level.
+**`/rust-tutor:auto-on`** - Enable continuous learning
+- Start learning while building real projects
+- Claude will pause and challenge you before writing Rust functions
+- All challenges logged to `.claude/tutor/logs/level-N.md`
 
-**Output**:
-- Goal and topic
-- Failing test code
-- Function stub
-- Acceptance criteria
-- Resources (links to docs)
+**`/rust-tutor:auto-off`** - Disable auto-mode
+- Return to normal Claude behavior
+- Use when you need to prototype quickly or focus on delivery
 
-**Example**:
-```bash
-> /slice
+**`/rust-tutor:auto-status`** - View auto-mode statistics
+- See total challenges completed
+- View correction rate and learning patterns
+- Find your learning journal location
 
-Level 1 (Foundations) - Slice 1
+### Manual Practice Commands
 
-Goal: Implement root-mean-square (RMS) function
-Topic: rust_basics, iterators
-File: crates/core/src/lib.rs
+**`/rust-tutor:slice`** - Get a practice exercise
+- Proposes a learning task based on your current level
+- Provides failing test, stub, and acceptance criteria
+- For focused drilling on specific concepts
 
-Test:
-[comprehensive test code]
+**`/rust-tutor:gate`** - Validate your practice work
+- Runs all 4 quality gates (fmt, clippy, tests, policy)
+- Updates streak and level on success
+- Resets streak on failure (but keeps your level)
 
-Stub:
-pub fn rms(samples: &[f32]) -> f32 { 0.0 }
+### Progress Tracking
 
-Acceptance:
-- All tests pass
-- No allocations
-- Use f64 for intermediate calculations
-
-Now implement the function. When done, run /gate.
-```
-
-### `/gate` - Run Quality Checks
-
-Runs all 4 quality gates and updates your progress.
-
-**On success**:
-- Increments completed count and streak
-- Levels you up after 3 consecutive passes
-- Appends result to history
-
-**On failure**:
-- Resets streak to 0
-- Shows exact errors with file:line pointers
-- Keeps your level (you can retry)
+**`/rust-tutor:level`** - View overall progress
+- Shows current level, streak, and recent history
+- Displays progress toward next level
+- Includes both auto-mode and manual mode stats
 
 **Example**:
 ```bash
-> /gate
-
-PASS: Quality Gates
-
-PASS: Formatting
-PASS: Lints
-PASS: Tests (3/3)
-PASS: Policy
-
-Progress Updated:
-- Level: 1 (Foundations)
-- Completed: 1 slice
-- Streak: 1 (need 2 more for level up)
-
-Great work! Run /slice to continue.
-```
-
-### `/level` - View Progress
-
-Shows your current level, streak, and recent history.
-
-**Example**:
-```bash
-> /level
+> /rust-tutor:level
 
 Learning Progress
 
-Current Level: 1 - Foundations
-Topics: rust_basics, iterators, borrowing, slices
-Completed: 1 slice at this level
-Streak: 1 consecutive passes
-Next Level: 2 - Errors & Traits (unlock after 2 more passes)
+Current Level: 2 - Errors & Traits
+Topics: Result, thiserror, From/Into
+Completed: 5 slices at this level (2 auto, 3 manual)
+Streak: 2 consecutive passes
+Next Level: 3 - DSP Basics (unlock after 1 more pass)
+
+Auto-Mode Stats:
+- Challenges completed: 2
+- Corrections made: 4 improvements
+- Learning journal: .claude/tutor/logs/level-2.md
 
 Recent History:
-- 2025-11-22 10:30: PASS - Implemented rms()
+- 2025-11-28 14:30: PASS (auto) - parse_row() with corrections
+- 2025-11-28 10:15: PASS (manual) - error handling exercise
 
 Progress to Next Level:
-[=>  ] 1/3
+[▓▓░] 2/3
 ```
 
 ---
 
-## How It Works (Technical)
+## Learning Journal
 
-The plugin uses a **hook system** to make Claude aware of your learning progress without you having to mention it:
+One of auto-mode's most powerful features is the **learning journal** - a detailed log of every challenge, correction, and learning point.
+
+### What Gets Logged
+
+Every auto-mode challenge is logged to `.claude/tutor/logs/level-N.md`:
+
+```markdown
+## 2025-11-28 14:30 - Auto-Challenge #5
+
+### Challenge
+Function: parse_row(line: &str) -> Result<Record, ParseError>
+Required for: CSV CLI tool row parsing
+Location: src/parser.rs:42
+
+### Review Result
+PASS: Approved with corrections
+
+Improvements made:
+1. Replaced manual split+collect with iterator chain
+   - Before: let parts: Vec<&str> = line.split(',').collect();
+   - After: line.split(',').map(...)
+   - Why: Avoids allocation, more idiomatic
+
+2. Changed .unwrap() to proper error propagation
+   - Before: parts[0].parse().unwrap()
+   - After: parts[0].parse().map_err(ParseError::InvalidNumber)?
+   - Why: Level 2 requires no unwrap in library code
+
+### Outcome
+Status: Approved with corrections | Streak: 2/3 → 3/3 → LEVEL UP to 3!
+```
+
+### Why the Journal Matters
+
+- **Reinforce learning**: Review to see patterns in your corrections
+- **Track progress**: Compare early vs. recent challenges
+- **Study guide**: Refresh concepts before leveling up
+- **Portfolio**: Real implementations from actual projects
+- **Learn from mistakes**: See what you commonly miss (allocations? error handling?)
+
+### Privacy Note
+
+Logs may contain project code. Add to `.gitignore` if needed:
+```gitignore
+.claude/tutor/logs/*.md
+```
+
+## How It Works (Technical)
 
 ### The Hook Mechanism
 
@@ -515,22 +526,7 @@ Maps Rust patterns to minimum required level. Edit to customize when concepts ar
 When using auto-mode, Claude logs every challenge to level-specific files:
 - `level-1.md` through `level-5.md` - Created automatically as you progress
 
-**What's logged**: Each entry includes:
-- Function name and why it was needed
-- Your implementation (if corrections were made)
-- Before/after comparisons with explanations
-- Streak updates and level-up announcements
-
-**Why logs matter**:
-- **Reinforce learning** - Review to see patterns in your corrections
-- **Track progress** - Compare early vs. recent challenges
-- **Study guide** - Refresh concepts before leveling up
-- **Portfolio** - Real implementations from actual projects
-
-**Privacy note**: Logs may contain project code. Add to `.gitignore` if needed:
-```gitignore
-.claude/tutor/logs/*.md
-```
+See the **Learning Journal** section above for details on what's logged and why it matters.
 
 ### Example Customizations
 
@@ -591,28 +587,45 @@ Each level builds on the previous, gradually increasing complexity and introduci
 
 ## FAQ
 
-### Can Claude give me hints if I'm stuck?
+### Should I use auto-mode or manual mode?
 
-Yes! Ask Claude questions about concepts without asking for the full solution. For example:
+**Start with auto-mode** if you want to learn while building real projects. It's the most powerful way to learn because you get real context, code review, and a learning journal.
+
+Use **manual mode** for:
+- Warming up before a coding session
+- Drilling specific concepts you're struggling with
+- Focused practice when you're not building a project
+
+**Pro tip**: Mix both! Use `/slice` to practice a concept, then `/auto-on` to apply it in a real project.
+
+### Can Claude give me hints if I'm stuck during a challenge?
+
+Yes! Ask Claude questions about concepts without asking for the full solution:
 - "How do I use .iter().max_by()?"
 - "What's the difference between &T and &mut T here?"
 - "Why does the borrow checker complain about this?"
 
 Claude will explain concepts and point you in the right direction without implementing the code for you.
 
-### What if I want to skip a slice?
+### Can I skip an auto-mode challenge?
 
-Just run `/slice` again to get a new task. The old task won't be tracked (no penalty for skipping).
+Yes! Type `skip` and Claude will write the function for you and continue. No penalty to your streak, but you won't get the learning benefit or code review.
+
+**Use skip when**: You're blocked, under time pressure, or the challenge doesn't match your learning goal at the moment.
+
+### How do I review my past challenges and corrections?
+
+Check your learning journal at `.claude/tutor/logs/level-N.md`. All auto-mode challenges, corrections, and explanations are logged there.
 
 ### Can I customize the learning path?
 
-Yes! Edit `.claude/tutor/levels.yaml` to change topics, constraints, or add your own levels.
+Yes! Edit `.claude/tutor/levels.yaml` to change topics, constraints, or add your own levels. You can also adjust auto-mode trigger frequency in `state.json`.
 
 ### What if state.json gets corrupted?
 
-Delete `.claude/tutor/state.json` and reinstall the plugin, or manually reset it to:
+Delete `.claude/tutor/state.json` and run any tutor command to reinitialize, or manually reset it to:
 ```json
-{"level": 1, "completed": 0, "streak": 0, "last_task": null, "history": []}
+{"level": 1, "completed": 0, "streak": 0, "auto_mode": {"enabled": false, "trigger_frequency": 8}}
 ```
 
 ### Does this work with existing Rust projects?
@@ -622,9 +635,10 @@ Yes! Install the plugin in any Rust project (workspace or single crate). It dete
 ### What happens after Level 5?
 
 You stay at Level 5 and can continue practicing. You can also:
-- Edit `levels.yaml` to add custom levels
-- Create your own DSP/CLI projects
+- Edit `levels.yaml` to add custom Level 6+
+- Build your own projects with auto-mode enabled
 - Contribute to open source Rust projects
+- Use the learning journal to review and solidify advanced concepts
 
 ---
 
