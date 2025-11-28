@@ -12,7 +12,7 @@ Learn Rust by doing, not by watching. This Claude Code plugin provides a structu
 
 ## TL;DR - Quick Install
 
-Add to your project's `.claude/settings.json`:
+**Step 1: Add to your project's `.claude/settings.json`:**
 ```json
 {
   "extraKnownMarketplaces": {
@@ -29,11 +29,22 @@ Add to your project's `.claude/settings.json`:
 }
 ```
 
-Then start learning:
+**Step 2: Install the plugin via Claude Code UI:**
+
+1. Run `/plugin` in Claude Code
+2. Select **"Browse and install plugins"**
+3. Select **"rust-tutor [learning]"** and press Space to enable
+4. Press Enter to install
+
+**Step 3: Start learning:**
+
+Commands are auto-prefixed with `/rust-tutor:` (you can tab-complete):
+
 ```bash
-/slice        # Get your first challenge
+/rust-tutor:slice        # Get your first challenge
 # ... implement the function ...
-/gate         # Validate your work
+/rust-tutor:gate         # Validate your work
+/rust-tutor:level        # View progress
 ```
 
 **That's it!** The plugin automatically initializes on first use.
@@ -60,9 +71,9 @@ Then start learning:
 
 ### Installation
 
-**Project-Level Installation (Recommended)**
-
 This plugin is designed for project-level use since it creates learning state in `.claude/tutor/` within your project.
+
+**Step 1: Add marketplace configuration**
 
 Add to your project's `.claude/settings.json`:
 ```json
@@ -81,9 +92,31 @@ Add to your project's `.claude/settings.json`:
 }
 ```
 
-When you commit this to your repository, team members will automatically get the plugin when they trust the folder.
+**Step 2: Install via Claude Code UI**
 
-**Why project-level?** The plugin tracks your learning progress in `.claude/tutor/state.json` within each project, so installing globally (user-level) doesn't make sense for this use case.
+1. Run `/plugin` in Claude Code
+2. Select **"Browse and install plugins"**
+3. Select **"rust-tutor [learning]"** and press Space to enable
+4. Press Enter to install
+
+The marketplace is now available and the plugin is enabled for this project.
+
+**Step 3: Using the commands**
+
+All plugin commands are namespaced with `/rust-tutor:` prefix:
+
+```bash
+/rust-tutor:slice        # Plan next learning task
+/rust-tutor:gate         # Run quality gates
+/rust-tutor:level        # View progress
+/rust-tutor:auto-on      # Enable auto-mode
+/rust-tutor:auto-off     # Disable auto-mode
+/rust-tutor:auto-status  # View auto-mode stats
+```
+
+**Tip:** You can tab-complete the commands - just type `/rust-tutor:` and press Tab.
+
+**Why project-level?** The plugin tracks your learning progress in `.claude/tutor/state.json` within each project. When you commit `.claude/settings.json` to your repository, team members will automatically get the plugin when they trust the folder.
 
 ### First Learning Slice
 
@@ -95,11 +128,11 @@ claude
 
 Then run your first task:
 
-```
-/slice        # Get a practice exercise with failing test
-              # ... implement the function ...
-/gate         # Validate with quality checks
-/level        # View your progress
+```bash
+/rust-tutor:slice        # Get a practice exercise with failing test
+                         # ... implement the function ...
+/rust-tutor:gate         # Validate with quality checks
+/rust-tutor:level        # View your progress
 ```
 
 The first time you run any tutor command, it automatically initializes the learning structure in `.claude/tutor/` with state and config files.
