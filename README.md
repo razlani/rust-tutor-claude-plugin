@@ -47,16 +47,9 @@ Learn Rust by doing, not by watching. This Claude Code plugin provides a structu
 
 ### Installation
 
-This plugin is designed for project-level installation (shared with your team via version control).
+**Project-Level Installation (Recommended for Teams)**
 
-1. Run `/plugin` in Claude Code
-2. Select "Browse Plugins" or "Manage Marketplaces"
-3. Add the Rust Tutor marketplace (if not already added)
-4. Find "Rust Tutor" and enable it
-
-The plugin will be configured in your project's `.claude/settings.json` and automatically enabled for team members who trust the repository.
-
-**Alternative**: Manually add to `.claude/settings.json`:
+Add to your project's `.claude/settings.json`:
 ```json
 {
   "extraKnownMarketplaces": {
@@ -72,6 +65,18 @@ The plugin will be configured in your project's `.claude/settings.json` and auto
   }
 }
 ```
+
+When you commit this to your repository, team members will automatically get the plugin when they trust the folder.
+
+**User-Level Installation (Personal Use)**
+
+```bash
+# In Claude Code:
+/plugin marketplace add razlani/rust-tutor-claude-plugin
+/plugin install rust-tutor@rust-tutor-claude-plugin
+```
+
+This installs the plugin globally for you across all projects.
 
 ### First Learning Slice
 
