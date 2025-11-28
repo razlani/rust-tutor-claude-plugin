@@ -12,12 +12,25 @@ Learn Rust by doing, not by watching. This Claude Code plugin provides a structu
 
 ## TL;DR - Quick Install
 
-```bash
-# In Claude Code, add the marketplace and install the plugin:
-/plugin marketplace add razlani/rust-tutor-claude-plugin
-/plugin install rust-tutor@rust-tutor-claude-plugin
+Add to your project's `.claude/settings.json`:
+```json
+{
+  "extraKnownMarketplaces": {
+    "rust-tutor-claude-plugin": {
+      "source": {
+        "source": "github",
+        "repo": "razlani/rust-tutor-claude-plugin"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "rust-tutor@rust-tutor-claude-plugin": true
+  }
+}
+```
 
-# Start learning:
+Then start learning:
+```bash
 /slice        # Get your first challenge
 # ... implement the function ...
 /gate         # Validate your work
@@ -47,7 +60,9 @@ Learn Rust by doing, not by watching. This Claude Code plugin provides a structu
 
 ### Installation
 
-**Project-Level Installation (Recommended for Teams)**
+**Project-Level Installation (Recommended)**
+
+This plugin is designed for project-level use since it creates learning state in `.claude/tutor/` within your project.
 
 Add to your project's `.claude/settings.json`:
 ```json
@@ -68,15 +83,7 @@ Add to your project's `.claude/settings.json`:
 
 When you commit this to your repository, team members will automatically get the plugin when they trust the folder.
 
-**User-Level Installation (Personal Use)**
-
-```bash
-# In Claude Code:
-/plugin marketplace add razlani/rust-tutor-claude-plugin
-/plugin install rust-tutor@rust-tutor-claude-plugin
-```
-
-This installs the plugin globally for you across all projects.
+**Why project-level?** The plugin tracks your learning progress in `.claude/tutor/state.json` within each project, so installing globally (user-level) doesn't make sense for this use case.
 
 ### First Learning Slice
 

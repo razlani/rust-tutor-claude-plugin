@@ -21,6 +21,5 @@
     "clippy",
     "rustfmt",
     "test-driven-development"
-  ],
-  "hooks": "./hooks/hooks.json"
+  ]
 }
