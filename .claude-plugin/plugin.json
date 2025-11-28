@@ -9,7 +9,6 @@
   "homepage": "https://github.com/razlani/rust-tutor-claude-plugin",
   "repository": "https://github.com/razlani/rust-tutor-claude-plugin",
   "license": "MIT",
-  "category": "learning",
   "keywords": [
     "rust",
     "learning",
