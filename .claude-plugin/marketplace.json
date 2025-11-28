@@ -33,7 +33,7 @@
         "rustfmt",
         "test-driven-development"
       ],
-      "source": "."
+      "source": "./"
     }
   ]
 }
