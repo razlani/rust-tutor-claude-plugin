@@ -1,8 +1,29 @@
 # Claude Rust Tutor Plugin
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Claude Code](https://img.shields.io/badge/Claude_Code-Plugin-5A67D8)](https://code.claude.com)
+[![Rust](https://img.shields.io/badge/Rust-Learning-orange)](https://www.rust-lang.org)
+
 **Interactive Rust learning through progressive difficulty, quality gates, and test-driven development**
 
 Learn Rust by doing, not by watching. This Claude Code plugin provides a structured, disciplined learning path where you write the code and Claude guides you through progressively harder challenges.
+
+---
+
+## TL;DR - Quick Install
+
+```bash
+# In Claude Code, add the marketplace and install the plugin:
+/plugin marketplace add razlani/rust-tutor-claude-plugin
+/plugin install rust-tutor@rust-tutor-claude-plugin
+
+# Start learning:
+/slice        # Get your first challenge
+# ... implement the function ...
+/gate         # Validate your work
+```
+
+**That's it!** The plugin automatically initializes on first use.
 
 ## Features
 
@@ -39,15 +60,15 @@ The plugin will be configured in your project's `.claude/settings.json` and auto
 ```json
 {
   "extraKnownMarketplaces": {
-    "rust-learning": {
+    "rust-tutor-claude-plugin": {
       "source": {
         "source": "github",
-        "repo": "YOUR_ORG/claude-rust-tutor-plugin"
+        "repo": "razlani/rust-tutor-claude-plugin"
       }
     }
   },
   "enabledPlugins": {
-    "rust-tutor@rust-learning": true
+    "rust-tutor@rust-tutor-claude-plugin": true
   }
 }
 ```
@@ -110,6 +131,88 @@ All gates must pass to advance. Failures reset your streak but don't drop your l
 | **5** | CLI & DX | 160 | clap, tracing, anyhow | + Help text required |
 
 **Progression**: Complete 3 slices in a row (streak of 3) to level up.
+
+---
+
+## Session Demo
+
+Here's what a real learning session looks like:
+
+```text
+> /slice
+
+Level 1 (Foundations) - Slice 1
+
+Goal: Implement root-mean-square (RMS) calculation
+
+Topic: iterators, f32/f64 precision
+
+File: crates/core/src/lib.rs
+
+Test (add to crates/core/tests/lib.rs):
+#[test]
+fn test_rms() {
+    assert_eq!(rms(&[]), 0.0);
+    assert_eq!(rms(&[2.0]), 2.0);
+    assert!((rms(&[1.0, 2.0, 3.0]) - 2.160).abs() < 0.01);
+}
+
+Stub (add to crates/core/src/lib.rs):
+pub fn rms(samples: &[f32]) -> f32 {
+    0.0  // TODO: implement
+}
+
+Acceptance Criteria:
+- All tests pass
+- No allocations (use iterator methods)
+- Use f64 for intermediate calculations to avoid precision loss
+
+Resources:
+- https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.map
+
+Now implement the function. When done, run /gate to verify your work.
+
+# ... developer implements the function ...
+
+> /gate
+
+SUCCESS: Quality Gates: ALL PASS
+
+PASS: Formatting: Passed (cargo fmt)
+PASS: Lints: Passed (cargo clippy)
+PASS: Tests: Passed (3 tests)
+PASS: Policy: Passed (no unwrap/expect in libs)
+
+Progress: Progress Updated:
+- Level: 1 (Foundations)
+- Completed: 1 slice
+- Streak: 1 consecutive passes
+
+Great work! Ready for the next slice? Run /slice to continue.
+
+> /level
+
+Progress: Learning Progress
+
+Current Level: 1 - Foundations
+Description: Learn Rust fundamentals
+Topics: rust_basics, iterators, borrowing, slices
+Completed: 1 slice at this level
+Streak: 1 consecutive passes
+Next Level: 2 - Errors & Traits (unlock after 2 more passes)
+
+Constraints for This Level:
+- Maximum LOC per slice: 50
+- Tests first: Yes
+
+Recent History (last 5 slices):
+- 2025-11-28 14:30: PASS
+
+Progress to Next Level:
+[▓░░] 1/3
+
+Total Slices Completed at This Level: 1
+```
 
 ---
 
